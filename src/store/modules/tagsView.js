@@ -5,7 +5,9 @@ const tagsView = {
   },
   mutations: {
     ADD_VISITED_VIEWS: (state, view) => {
-      if (state.visitedViews.some(v => v.path === view.path)) return
+      if (state.visitedViews.some(function(v) {
+        return (v.path === view.path || !!view.meta.isChildPage)
+      })) return
       state.visitedViews.push({
         name: view.name,
         path: view.path,
@@ -51,22 +53,22 @@ const tagsView = {
     }
   },
   actions: {
-    addVisitedViews ({ commit }, view) {
+    addVisitedViews({ commit }, view) {
       commit('ADD_VISITED_VIEWS', view)
     },
-    delVisitedViews ({ commit, state }, view) {
+    delVisitedViews({ commit, state }, view) {
       return new Promise((resolve) => {
         commit('DEL_VISITED_VIEWS', view)
         resolve([...state.visitedViews])
       })
     },
-    delOthersViews ({ commit, state }, view) {
+    delOthersViews({ commit, state }, view) {
       return new Promise((resolve) => {
         commit('DEL_OTHERS_VIEWS', view)
         resolve([...state.visitedViews])
       })
     },
-    delAllViews ({ commit, state }) {
+    delAllViews({ commit, state }) {
       return new Promise((resolve) => {
         commit('DEL_ALL_VIEWS')
         resolve([...state.visitedViews])
