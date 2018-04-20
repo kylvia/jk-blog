@@ -8,6 +8,13 @@ export function fetchList(query) {
   })
 }
 
+export function fetchClasses() {
+  return request({
+    url: '/article/classesList',
+    method: 'get'
+  })
+}
+
 export function fetchArticle(query) {
   return request({
     url: '/article/detail',
