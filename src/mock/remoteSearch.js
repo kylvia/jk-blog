@@ -6,10 +6,11 @@ const count = 100
 
 for (let i = 0; i < count; i++) {
   NameList.push(Mock.mock({
-    name: '@first'
+    name: '@first',
+    'id|+1': 2
   }))
 }
-NameList.push({ name: 'mockPan' })
+NameList.push({ name: 'mockPan', id: 1 })
 
 export default {
   searchUser: config => {

@@ -3,12 +3,8 @@
     <div class="filter-container">
       <el-input @keyup.enter.native="handleFilter" style="width: 200px;" class="filter-item" :placeholder="$t('table.title')" v-model="listQuery.title">
       </el-input>
-      <el-select clearable style="width: 90px" class="filter-item" v-model="listQuery.importance" :placeholder="$t('table.importance')">
-        <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item">
-        </el-option>
-      </el-select>
       <el-select clearable @change='handleFilter' class="filter-item" style="width: 130px" v-model="listQuery.classes" placeholder="分类">
-        <el-option v-for="item in  calendarTypeOptions" :key="item.value" :label="item.name" :value="item.value">
+        <el-option v-for="item in calendarTypeOptions" :key="item.id" :label="item.name" :value="item.id">
         </el-option>
       </el-select>
       <el-select @change='handleFilter' style="width: 140px" class="filter-item" v-model="listQuery.sort">
@@ -25,11 +21,11 @@
 
     <el-table :key='tableKey' :data="list" v-loading="listLoading" element-loading-text="给我一点时间" border fit highlight-current-row
       style="width: 100%">
-      <el-table-column align="center" :label="$t('table.id')" width="65">
+      <!--<el-table-column align="center" :label="$t('table.id')" width="65">
         <template slot-scope="scope">
           <span>{{scope.row.id}}</span>
         </template>
-      </el-table-column>
+      </el-table-column>-->
       <el-table-column width="150px" align="center" :label="$t('table.date')">
         <template slot-scope="scope">
           <span>{{scope.row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}')}}</span>
@@ -42,7 +38,7 @@
       </el-table-column>
       <el-table-column width="110px" align="center" label="分类">
         <template slot-scope="scope">
-          <span>{{scope.row.classes}}</span>
+          <span>{{scope.row.classesLabel}}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('table.readings')" width="95">
@@ -58,7 +54,7 @@
       </el-table-column>
       <el-table-column align="center" :label="$t('table.actions')" width="230" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <router-link :to="{ path:'/form/edit-form/'+scope.row.id}">
+          <router-link :to="{ path:'/form/edit-form/'+scope.row.articleId}">
             <!--<el-button type="primary" size="mini" @click="handleUpdate(scope.row)">{{$t('table.edit')}}</el-button>-->
             <el-button type="primary" size="mini">{{$t('table.edit')}}</el-button>
           </router-link>
@@ -111,25 +107,22 @@ export default {
         page: 1,
         limit: 20,
         classes: undefined,
+        classesLabel: undefined,
         title: undefined,
         sort: '+id'
       },
-      importanceOptions: [1, 2, 3],
       calendarTypeOptions: [],
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       temp: {
         id: undefined,
-        importance: 1,
         remark: '',
         timestamp: new Date(),
         title: '',
-        type: '',
         status: 'published'
       },
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        type: [{ required: true, message: 'type is required', trigger: 'change' }],
         timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
         title: [{ required: true, message: 'title is required', trigger: 'blur' }]
       }
@@ -143,6 +136,19 @@ export default {
         deleted: 'danger'
       }
       return statusMap[status]
+    }
+  },
+  computed: {
+    classesFilter(classes) {
+      let classesVal = ''
+      console.log(this.calendarTypeOptions)
+      this.calendarTypeOptions.map(function(item, index) {
+        if (+item.value === classes) {
+          classesVal = item.name
+          return false
+        }
+      })
+      return classesVal
     }
   },
   created() {
@@ -164,7 +170,6 @@ export default {
       })
     },
     handleFilter() {
-      debugger
       this.listQuery.page = 1
       this.getList()
     },
@@ -186,7 +191,6 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        importance: 1,
         remark: '',
         timestamp: new Date(),
         title: '',

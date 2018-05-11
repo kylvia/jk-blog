@@ -6,13 +6,15 @@ const count = 100
 
 for (let i = 0; i < count; i++) {
   NameList.push(Mock.mock({
-    name: '@first'
+    name: '@first',
+    'id|+1': 2
   }))
 }
-NameList.push({ name: '前端' })
+NameList.push({ name: '前端', id: 1 })
 
 export default {
   searchClasses: config => {
+    debugger
     const { name } = param2Obj(config.url)
     const mockNameList = NameList.filter(item => {
       const lowerCaseName = item.name.toLowerCase()

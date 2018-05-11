@@ -9,19 +9,21 @@ for (let i = 0; i < count; i++) {
   List.push(Mock.mock({
     id: i,
     timestamp: +Mock.Random.date('T'),
+    author: '@first',
     reviewer: '@first',
     title: '@title(5, 10)',
     forecast: '@float(0, 100, 2, 2)',
+    importance: '@integer(1, 3)',
     'type|1': ['CN', 'US', 'JP', 'EU'],
     'status|1': ['published', 'draft', 'deleted'],
-    'classes|1': ['前端', 'IOS', 'Android', '游记'],
+    'classes|1': ['0', '1', '2', '3'],
     display_time: '@datetime',
     pageviews: '@integer(300, 5000)'
   }))
   Article.push(Mock.mock({
     id: i,
-    author: { key: 'mockPan' },
-    classes: { key: '前端' },
+    author: { key: 'mockPan', id: i },
+    classes: { key: '前端', id: i },
     source_name: '原创作者',
     category_item: [{ key: 'global', name: '全球' }],
     comment_disabled: true,
@@ -39,11 +41,11 @@ for (let i = 0; i < count; i++) {
 
 export default {
   getList: config => {
-    const { type, classes, title, page = 1, limit = 20, sort } = param2Obj(config.url)
+    const { classes, type, title, page = 1, limit = 20, sort } = param2Obj(config.url)
 
     let mockList = List.filter(item => {
-      if (type && item.type !== type) return false
       if (classes && item.classes !== classes) return false
+      if (type && item.type !== type) return false
       if (title && item.title.indexOf(title) < 0) return false
       return true
     })
@@ -60,7 +62,7 @@ export default {
     }
   },
   classesList: () => ({
-    body: [{ name: '前端', value: '0' }, { name: 'IOS', value: '1' }, { name: 'Android', value: '2' }, { name: '游记', value: '3' }]
+    body: [{ name: '前端', id: '0' }, { name: 'IOS', id: '1' }, { name: 'Android', id: '2' }, { name: '游记', id: '3' }]
   }),
   getPv: () => ({
     pvData: [{ key: 'PC', pv: 1024 }, { key: 'mobile', pv: 1024 }, { key: 'ios', pv: 1024 }, { key: 'android', pv: 1024 }]

@@ -46,21 +46,17 @@
 
             <div class="postInfo-container">
               <el-row>
-                <el-col :span="8">
-                  <el-form-item label-width="45px" label="作者:" class="postInfo-container-item">
-                    <multiselect v-model="postForm.author" :options="userLIstOptions" @search-change="getRemoteUserList" placeholder="搜索用户" selectLabel="选择"
-                                 deselectLabel="删除" track-by="key" :internalSearch="false" label="key">
-                      <span slot='noResult'>无结果</span>
-                    </multiselect>
-                  </el-form-item>
-                </el-col>
 
                 <el-col :span="8">
                   <el-form-item label-width="45px" label="分类:" class="postInfo-container-item">
-                    <multiselect v-model="postForm.classes" :options="classesLIstOptions" @search-change="getRemoteClassesList" placeholder="搜索分类" selectLabel="选择"
-                                 deselectLabel="删除" track-by="key" :internalSearch="false" label="key">
+                    <!--<multiselect v-model="postForm.classesLabel" :options="classesLIstOptions" @search-change="getRemoteClassesList" placeholder="搜索分类" selectLabel="选择"
+                                 deselectLabel="删除" track-by="id" :internalSearch="false" label="name">
                       <span slot='noResult'>无结果</span>
-                    </multiselect>
+                    </multiselect>-->
+                    <el-select clearable class="filter-item" style="width: 130px" v-model="postForm.classes" placeholder="分类">
+                      <el-option v-for="item in classesLIstOptions" :key="item.id" :label="item.name" :value="item.id">
+                      </el-option>
+                    </el-select>
                   </el-form-item>
                 </el-col>
 
@@ -102,8 +98,7 @@ import MDinput from '@/components/MDinput'
 import Multiselect from 'vue-multiselect'// 使用的一个多选框组件，element-ui的select不能满足所有需求
 import 'vue-multiselect/dist/vue-multiselect.min.css'// 多选框组件css
 import Sticky from '@/components/Sticky' // 粘性header组件
-import { fetchArticle } from '@/api/article'
-import { userSearch } from '@/api/remoteSearch'
+import { fetchArticle, fetchClasses, updateArticle, createArticle } from '@/api/article'
 import { classesSearch } from '@/api/remoteClassesSearch'
 
 const defaultForm = {
@@ -143,7 +138,6 @@ export default {
       postForm: Object.assign({}, defaultForm),
       fetchSuccess: true,
       loading: false,
-      userLIstOptions: [],
       classesLIstOptions: [],
       rules: {
         image_uri: [{ validator: validateRequire }],
@@ -158,6 +152,7 @@ export default {
     }
   },
   created() {
+    this.getClasses()
     if (this.isEdit) {
       this.fetchData()
     } else {
@@ -168,23 +163,66 @@ export default {
     fetchData() {
       fetchArticle({ id: this.$route.params.id }).then(response => {
         this.postForm = response.data
+        this.postForm.display_time = new Date(this.postForm.display_time * 1000)
+        console.log(this.postForm)
       }).catch(err => {
         this.fetchSuccess = false
         console.log(err)
       })
     },
+    getClasses() {
+      fetchClasses().then(response => {
+        this.classesLIstOptions = response.data
+      })
+    },
     submitForm() {
-      this.postForm.display_time = parseInt(this.display_time / 1000)
-      console.log(this.postForm)
+      const that = this
+      // console.log(this.postForm.display_time)
+      this.postForm.display_time = parseInt(this.postForm.display_time / 1000)
+      this.postForm.id = this.$route.params.id
       this.$refs.postForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$notify({
-            title: '成功',
-            message: '发布文章成功',
-            type: 'success',
-            duration: 2000
-          })
+          if (this.isEdit) {
+            // 编辑
+            updateArticle(that.postForm).then(function(response) {
+              if (response.code !== 100) {
+                that.$notify({
+                  title: '失败',
+                  message: '发布文章失败',
+                  type: 'error',
+                  duration: 2000
+                })
+                return
+              }
+              that.$notify({
+                title: '成功',
+                message: '发布文章成功',
+                type: 'success',
+                duration: 2000
+              })
+              that.$router.push({ path: '/example/table' })
+            })
+          } else {
+            createArticle(that.postForm).then(function(response) {
+              if (response.code !== 100) {
+                that.$notify({
+                  title: '失败',
+                  message: '发布文章失败',
+                  type: 'error',
+                  duration: 2000
+                })
+                return
+              }
+              that.$notify({
+                title: '成功',
+                message: '发布文章成功',
+                type: 'success',
+                duration: 2000
+              })
+              that.$router.push({ path: '/example/table' })
+            })
+          }
           this.postForm.status = 'published'
           this.loading = false
         } else {
@@ -209,22 +247,12 @@ export default {
       })
       this.postForm.status = 'draft'
     },
-    getRemoteUserList(query) {
-      userSearch(query).then(response => {
-        if (!response.data.items) return
-        console.log(response)
-        this.userLIstOptions = response.data.items.map(v => ({
-          key: v.name
-        }))
-      })
-    },
     getRemoteClassesList(query) {
+      console.log(query)
       classesSearch(query).then(response => {
         if (!response.data.items) return
         console.log(response)
-        this.classesLIstOptions = response.data.items.map(v => ({
-          key: v.name
-        }))
+        this.classesLIstOptions = response.data
       })
     }
   }
