@@ -49,7 +49,7 @@
       </el-table-column>
       <el-table-column class-name="status-col" :label="$t('table.status')" width="100">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.status | statusFilter">{{scope.row.status}}</el-tag>
+          <el-tag :type="scope.row.status | statusStyleFilter">{{scope.row.status | statusFilter}}</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" :label="$t('table.actions')" width="230" class-name="small-padding fixed-width">
@@ -58,12 +58,12 @@
             <!--<el-button type="primary" size="mini" @click="handleUpdate(scope.row)">{{$t('table.edit')}}</el-button>-->
             <el-button type="primary" size="mini">{{$t('table.edit')}}</el-button>
           </router-link>
-          <el-button v-if="scope.row.status!='published'" size="mini" type="success" @click="handleModifyStatus(scope.row,'published')">{{$t('table.publish')}}
+          <el-button v-if="scope.row.status!=0" size="mini" type="success" @click="handleModifyStatus(scope.row,0)">{{$t('table.publish')}}
           </el-button>
-          <el-button v-if="scope.row.status!='draft'" size="mini" @click="handleModifyStatus(scope.row,'draft')">{{$t('table.draft')}}
+          <el-button v-if="scope.row.status!=1" size="mini" @click="handleModifyStatus(scope.row,1)">{{$t('table.draft')}}
           </el-button>
-          <el-button v-if="scope.row.status!='deleted'" size="mini" type="danger" @click="handleModifyStatus(scope.row,'deleted')">{{$t('table.delete')}}
-          </el-button>
+          <!--<el-button v-if="scope.row.status!='deleted'" size="mini" type="danger" @click="handleModifyStatus(scope.row,'deleted')">{{$t('table.delete')}}
+          </el-button>-->
         </template>
       </el-table-column>
     </el-table>
@@ -88,7 +88,7 @@
 </template>
 
 <script>
-import { fetchList, fetchPv, fetchClasses } from '@/api/article'
+import { fetchList, fetchPv, fetchClasses, updateStatus } from '@/api/article'
 import waves from '@/directive/waves' // 水波纹指令
 import { parseTime } from '@/utils'
 
@@ -118,7 +118,7 @@ export default {
         remark: '',
         timestamp: new Date(),
         title: '',
-        status: 'published'
+        status: 0
       },
       dialogPvVisible: false,
       pvData: [],
@@ -129,11 +129,18 @@ export default {
     }
   },
   filters: {
+    statusStyleFilter(status) {
+      const statusMap = {
+        0: 'success',
+        1: 'info',
+        2: 'danger'
+      }
+      return statusMap[status]
+    },
     statusFilter(status) {
       const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
+        0: '发布',
+        1: '草稿'
       }
       return statusMap[status]
     }
@@ -166,7 +173,8 @@ export default {
     },
     getClasses() {
       fetchClasses().then(response => {
-        this.calendarTypeOptions = response.data.body
+        console.log(response.data)
+        this.calendarTypeOptions = response.data
       })
     },
     handleFilter() {
@@ -182,11 +190,27 @@ export default {
       this.getList()
     },
     handleModifyStatus(row, status) {
-      this.$message({
-        message: '操作成功',
-        type: 'success'
+      const that = this
+      let tips = ''
+      tips = (+status ? '发布' : '存为草稿')
+      updateStatus({ id: row._id, status: status }).then(function(response) {
+        if (response.code !== 100) {
+          that.$notify({
+            title: '失败',
+            message: tips + '失败',
+            type: 'error',
+            duration: 2000
+          })
+          return
+        }
+        row.status = status
+        that.$message({
+          title: '成功',
+          message: tips + '成功',
+          type: 'success',
+          duration: 2000
+        })
       })
-      row.status = status
     },
     resetTemp() {
       this.temp = {
@@ -194,7 +218,7 @@ export default {
         remark: '',
         timestamp: new Date(),
         title: '',
-        status: 'published',
+        status: 0,
         type: ''
       }
     },

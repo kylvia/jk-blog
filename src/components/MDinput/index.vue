@@ -20,9 +20,6 @@
       <input v-if="type === 'text'" type="text" class="material-input" :name="name" :placeholder="fillPlaceHolder" v-model="currentValue"
         :readonly="readonly" :disabled="disabled" :autoComplete="autoComplete" :minlength="minlength" :maxlength="maxlength"
         :required="required" @focus="handleMdFocus" @blur="handleMdBlur" @input="handleModelInput">
-      <el-input autosize v-if="type === 'textarea'" type="textarea" class="material-input material-textarea" :name="name" :placeholder="fillPlaceHolder" v-model="currentValue"
-        :readonly="readonly" :disabled="disabled" :autoComplete="autoComplete" :minlength="minlength" :maxlength="maxlength"
-                :required="required" @focus="handleMdFocus" @blur="handleMdBlur" @input="handleModelInput"></el-input>
       <span class="material-input-bar"></span>
       <label class="material-label">
         <slot></slot>

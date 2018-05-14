@@ -73,31 +73,48 @@ export const asyncRouterMap = [
   {
     path: '/example',
     component: Layout,
-    redirect: '/example/table/complex-table',
+    redirect: '/example/table',
     name: 'article',
     meta: {
-      title: 'article',
-      icon: 'example'
+      title: 'editForm',
+      icon: 'table'
     },
     children: [
       {
-        path: '/example/table',
-        component: _import('example/table/index'),
-        redirect: '/example/table/complex-table',
-        name: 'Table',
+        path: 'table',
+        component: _import('example/table/complexTable'),
+        name: 'article',
         meta: {
-          title: 'Table',
+          title: 'articleTable',
           icon: 'table'
-        },
-        children: [
-          { path: 'complex-table', component: _import('example/table/complexTable'), name: 'articleTable', meta: { title: 'articleTable' }}
-        ]
+        }
       },
-      { path: 'tab/index', icon: 'tab', component: _import('example/tab/index'), name: 'tab', meta: { title: 'tab' }}
+      {
+        path: '/form/create-form',
+        component: _import('form/create'),
+        name: 'article',
+        hidden: true,
+        meta: {
+          title: 'createForm',
+          icon: 'table',
+          isChildPage: true
+        }
+      },
+      {
+        path: '/form/edit-form/:id',
+        component: _import('form/edit'),
+        name: 'article',
+        hidden: true,
+        meta: {
+          title: 'editForm',
+          icon: 'table',
+          isChildPage: true
+        }
+      }
     ]
   },
 
-  {
+  /* {
     path: '/form',
     component: Layout,
     hidden: true,
@@ -110,7 +127,7 @@ export const asyncRouterMap = [
       { path: 'create-form', component: _import('form/create'), name: 'createForm', meta: { title: 'createForm', icon: 'table', isChildPage: true }},
       { path: 'edit-form/:id', component: _import('form/edit'), name: 'editForm', meta: { title: 'editForm', icon: 'table', isChildPage: true }}
     ]
-  },
+  },*/
 
   {
     path: '/webInfo',

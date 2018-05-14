@@ -49,16 +49,20 @@
           </el-col>
         </el-row>-->
         <el-form-item style="margin-bottom: 40px;" prop="aboutMe">
-          <MDinput type="textarea" name="name" v-model="postForm.aboutMe" required>
-            关于我
-          </MDinput>
+          <label class="setLabel">关于我</label>
+          <el-input
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 4}"
+            placeholder="请输入内容"
+            v-model="postForm.aboutMe" required>
+          </el-input>
         </el-form-item>
 
         <el-row>
           <el-col :span="12">
             <el-form-item style="margin-bottom: 40px;">
               <label class="settingName">头像</label><br>
-              <pan-thumb :image="postForm.avater" v-model="postForm.avater"></pan-thumb>
+              <pan-thumb :image="postForm.avater"></pan-thumb>
 
               <el-button type="primary" icon="upload" style="position: absolute;bottom: 15px;margin-left: 40px;" @click="imagecropperShow=true">Change avatar
               </el-button>
@@ -78,9 +82,10 @@
 import Upload from '@/components/Upload/singleImage3'
 import MDinput from '@/components/MDinput'
 import Sticky from '@/components/Sticky' // 粘性header组件
-import { fetchPvSys } from '@/api/sysInfo'
+import { fetchPvSys, updatePvSys } from '@/api/sysInfo'
 import ImageCropper from '@/components/ImageCropper'
 import PanThumb from '@/components/PanThumb'
+import store from '@/store'
 
 const defaultForm = {
   sysName: '', // 系统名称
@@ -124,7 +129,7 @@ export default {
   },
   methods: {
     fetchData() {
-      fetchPvSys().then(response => {
+      fetchPvSys({ userName: store.getters.name }).then(response => {
         this.postForm = response.data
       }).catch(err => {
         this.fetchSuccess = false
@@ -133,16 +138,33 @@ export default {
     },
     submitForm() {
       console.log(this.postForm)
+      this.postForm.userName = store.getters.name
+      const that = this
       this.$refs.postForm.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$notify({
-            title: '成功',
-            message: '修改成功',
-            type: 'success',
-            duration: 2000
+          updatePvSys(this.postForm).then(response => {
+            this.loading = false
+            if (response.code !== 100) {
+              that.$notify({
+                title: '失败',
+                message: '修改失败',
+                type: 'error',
+                duration: 2000
+              })
+              return
+            }
+            that.$notify({
+              title: '成功',
+              message: '修改成功',
+              type: 'success',
+              duration: 2000
+            })
+          }).catch(err => {
+            this.loading = false
+            this.fetchSuccess = false
+            console.log(err)
           })
-          this.loading = false
         } else {
           console.log('error submit!!')
           return false
@@ -152,6 +174,7 @@ export default {
     refresh() {
       window.location.reload()
     },
+
     cropSuccess(resData) {
       this.imagecropperShow = false
       this.imagecropperKey = this.imagecropperKey + 1
@@ -216,6 +239,11 @@ export default {
   }
   .el-form-item.is-success .el-textarea__inner{
     border-color: transparent;
+  }
+  .setLabel{
+    color: #9E9E9E;
+    font-size: 18px;
+    font-weight: 500;
   }
 </style>
 

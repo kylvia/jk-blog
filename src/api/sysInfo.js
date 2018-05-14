@@ -1,8 +1,16 @@
 import request from '@/utils/request'
 
-export function fetchPvSys() {
+export function fetchPvSys(data) {
   return request({
-    url: '/sysInfo/list', // 假地址 自行替换
-    method: 'get'
+    url: '/sysInfo/list',
+    method: 'post',
+    data
+  })
+}
+export function updatePvSys(data) {
+  return request({
+    url: '/sysInfo/update',
+    method: 'post',
+    data
   })
 }

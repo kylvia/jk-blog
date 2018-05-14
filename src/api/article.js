@@ -46,3 +46,11 @@ export function updateArticle(data) {
     data
   })
 }
+
+export function updateStatus(data) {
+  return request({
+    url: '/article/updateStatus',
+    method: 'post',
+    data
+  })
+}

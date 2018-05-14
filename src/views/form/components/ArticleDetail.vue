@@ -5,7 +5,7 @@
       <sticky :className="'sub-navbar '+postForm.status">
         <template v-if="fetchSuccess">
 
-          <router-link style="margin-right:15px;" v-show='isEdit' :to="{ path:'create-form'}">
+          <router-link style="margin-right:15px;" v-show='isEdit' :to="{ path:'/form/create-form/'}">
             <el-button type="info">创建form</el-button>
           </router-link>
 
@@ -23,9 +23,9 @@
             </el-dropdown-menu>
           </el-dropdown>
 
-          <el-button v-loading="loading" style="margin-left: 10px;" type="success" @click="submitForm()">发布
+          <el-button v-loading="loading" style="margin-left: 10px;" type="success" @click="submitForm(0)">发布
           </el-button>
-          <el-button v-loading="loading" type="warning" @click="draftForm">草稿</el-button>
+          <el-button v-loading="loading" type="warning" @click="submitForm(1)">草稿</el-button>
 
         </template>
         <template v-else>
@@ -175,7 +175,7 @@ export default {
         this.classesLIstOptions = response.data
       })
     },
-    submitForm() {
+    submitForm(status) {
       const that = this
       // console.log(this.postForm.display_time)
       this.postForm.display_time = parseInt(this.postForm.display_time / 1000)
@@ -223,7 +223,7 @@ export default {
               that.$router.push({ path: '/example/table' })
             })
           }
-          this.postForm.status = 'published'
+          this.postForm.status = +status
           this.loading = false
         } else {
           console.log('error submit!!')
@@ -245,7 +245,7 @@ export default {
         showClose: true,
         duration: 1000
       })
-      this.postForm.status = 'draft'
+      this.postForm.status = 1
     },
     getRemoteClassesList(query) {
       console.log(query)
