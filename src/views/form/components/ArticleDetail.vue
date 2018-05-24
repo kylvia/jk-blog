@@ -59,6 +59,18 @@
                     </el-select>
                   </el-form-item>
                 </el-col>
+                <el-col :span="8">
+                  <el-form-item label-width="80px" label="文章类型:" class="postInfo-container-item">
+                    <!--<multiselect v-model="postForm.classesLabel" :options="classesLIstOptions" @search-change="getRemoteClassesList" placeholder="搜索分类" selectLabel="选择"
+                                 deselectLabel="删除" track-by="id" :internalSearch="false" label="name">
+                      <span slot='noResult'>无结果</span>
+                    </multiselect>-->
+                    <el-select clearable class="filter-item" style="width: 130px" v-model="postForm.articleType" placeholder="类型">
+                      <el-option v-for="item in articleTypes" :key="item.id" :label="item.name" :value="item.id">
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
 
 
                 <el-col :span="8">
@@ -139,6 +151,13 @@ export default {
       fetchSuccess: true,
       loading: false,
       classesLIstOptions: [],
+      articleTypes: [{
+        id: 0,
+        name: '原创'
+      }, {
+        id: 1,
+        name: '转载'
+      }],
       rules: {
         image_uri: [{ validator: validateRequire }],
         title: [{ validator: validateRequire }],

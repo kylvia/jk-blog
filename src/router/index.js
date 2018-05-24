@@ -76,7 +76,7 @@ export const asyncRouterMap = [
     redirect: '/example/table',
     name: 'article',
     meta: {
-      title: 'editForm',
+      title: 'articleTable',
       icon: 'table'
     },
     children: [
