@@ -54,7 +54,7 @@
       </el-table-column>
       <el-table-column align="center" :label="$t('table.actions')" width="230" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <router-link :to="{ path:'/form/edit-form/'+scope.row.articleId}">
+          <router-link :to="{ path:'/form/edit-form/'+scope.row.id}">
             <!--<el-button type="primary" size="mini" @click="handleUpdate(scope.row)">{{$t('table.edit')}}</el-button>-->
             <el-button type="primary" size="mini">{{$t('table.edit')}}</el-button>
           </router-link>
@@ -193,7 +193,7 @@ export default {
       const that = this
       let tips = ''
       tips = (+status ? '发布' : '存为草稿')
-      updateStatus({ id: row._id, status: status }).then(function(response) {
+      updateStatus({ id: row.id, status: status }).then(function(response) {
         if (response.code !== 100) {
           that.$notify({
             title: '失败',

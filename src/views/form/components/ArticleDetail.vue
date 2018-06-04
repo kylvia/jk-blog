@@ -49,11 +49,7 @@
 
                 <el-col :span="8">
                   <el-form-item label-width="45px" label="分类:" class="postInfo-container-item">
-                    <!--<multiselect v-model="postForm.classesLabel" :options="classesLIstOptions" @search-change="getRemoteClassesList" placeholder="搜索分类" selectLabel="选择"
-                                 deselectLabel="删除" track-by="id" :internalSearch="false" label="name">
-                      <span slot='noResult'>无结果</span>
-                    </multiselect>-->
-                    <el-select clearable class="filter-item" style="width: 130px" v-model="postForm.classes" placeholder="分类">
+                    <el-select clearable class="filter-item" @change="classesLiSelect" style="width: 130px" v-model="postForm.classes" placeholder="分类">
                       <el-option v-for="item in classesLIstOptions" :key="item.id" :label="item.name" :value="item.id">
                       </el-option>
                     </el-select>
@@ -61,10 +57,6 @@
                 </el-col>
                 <el-col :span="8">
                   <el-form-item label-width="80px" label="文章类型:" class="postInfo-container-item">
-                    <!--<multiselect v-model="postForm.classesLabel" :options="classesLIstOptions" @search-change="getRemoteClassesList" placeholder="搜索分类" selectLabel="选择"
-                                 deselectLabel="删除" track-by="id" :internalSearch="false" label="name">
-                      <span slot='noResult'>无结果</span>
-                    </multiselect>-->
                     <el-select clearable class="filter-item" style="width: 130px" v-model="postForm.articleType" placeholder="类型">
                       <el-option v-for="item in articleTypes" :key="item.id" :label="item.name" :value="item.id">
                       </el-option>
@@ -119,7 +111,6 @@ const defaultForm = {
   content: '', // 文章内容
   content_short: '', // 文章摘要
   image_uri: '', // 文章图片
-  source_name: '', // 文章外部作者
   display_time: undefined, // 前台展示时间
   id: undefined,
   comment_disabled: false
@@ -266,13 +257,12 @@ export default {
       })
       this.postForm.status = 1
     },
-    getRemoteClassesList(query) {
-      console.log(query)
-      classesSearch(query).then(response => {
-        if (!response.data.items) return
-        console.log(response)
-        this.classesLIstOptions = response.data
+    classesLiSelect() {
+      const that = this
+      const classesFi = this.classesLIstOptions.filter(function(item, index) {
+        return (item.id === that.postForm.classes)
       })
+      that.postForm.classesLabel = classesFi[0].name
     }
   }
 }
