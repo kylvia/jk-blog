@@ -62,12 +62,12 @@
           <el-col :span="12">
             <el-form-item style="margin-bottom: 40px;">
               <label class="settingName">头像</label><br>
-              <pan-thumb :image="postForm.avater"></pan-thumb>
+              <pan-thumb :image="postForm.avatar"></pan-thumb>
 
               <el-button type="primary" icon="upload" style="position: absolute;bottom: 15px;margin-left: 40px;" @click="imagecropperShow=true">Change avatar
               </el-button>
 
-              <image-cropper :width="300" :height="300" url="https://httpbin.org/post" @close='close' @crop-upload-success="cropSuccess" langType="en"
+              <image-cropper :width="300" :height="300" :url="imgAction" @close='close' @crop-upload-success="cropSuccess" langType="en"
                              :key="imagecropperKey" v-show="imagecropperShow"></image-cropper>
             </el-form-item>
           </el-col>
@@ -127,6 +127,12 @@ export default {
   created() {
     this.fetchData()
   },
+  computed: {
+    imgAction() {
+      return ('/articleFront/upload')
+    }
+
+  },
   methods: {
     fetchData() {
       fetchPvSys({ userName: store.getters.name }).then(response => {
@@ -176,6 +182,8 @@ export default {
     },
 
     cropSuccess(resData) {
+      debugger
+      console.log(resData)
       this.imagecropperShow = false
       this.imagecropperKey = this.imagecropperKey + 1
       this.postForm.avater = resData.files.avatar
