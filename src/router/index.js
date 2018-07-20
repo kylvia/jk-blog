@@ -137,6 +137,14 @@ export const asyncRouterMap = [
       { path: 'edit-form', component: _import('webInfo/edit'), name: 'editWebInfo', meta: { title: 'editWebInfo', icon: 'table' }}
     ]
   },
+  {
+    path: '/photos',
+    component: Layout,
+    name: 'photos',
+    children: [
+      { path: 'photos-list', component: _import('photos/index'), name: 'photos', meta: { title: 'photo', icon: 'table' }}
+    ]
+  },
 
   { path: '*', redirect: '/404', hidden: true }
 ]

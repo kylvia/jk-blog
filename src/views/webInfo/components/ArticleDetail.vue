@@ -91,7 +91,7 @@ const defaultForm = {
   sysName: '', // 系统名称
   motto: '', // 座右铭
   aboutMe: '', // 座右铭
-  avater: '', // 座右铭
+  avatar: '', // 座右铭
   id: undefined
 }
 
@@ -117,7 +117,7 @@ export default {
       imagecropperShow: false,
       imagecropperKey: 0,
       rules: {
-        avater: [{ validator: validateRequire }],
+        avatar: [{ validator: validateRequire }],
         sysName: [{ validator: validateRequire }],
         motto: [{ validator: validateRequire }],
         aboutMe: [{ validator: validateRequire }]
@@ -182,11 +182,10 @@ export default {
     },
 
     cropSuccess(resData) {
-      debugger
       console.log(resData)
       this.imagecropperShow = false
       this.imagecropperKey = this.imagecropperKey + 1
-      this.postForm.avater = resData.files.avatar
+      this.postForm.avatar = resData
     },
     close() {
       this.imagecropperShow = false

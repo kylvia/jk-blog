@@ -54,3 +54,11 @@ export function updateStatus(data) {
     data
   })
 }
+
+export function deleteStatus(data) {
+  return request({
+    url: '/article/delete',
+    method: 'post',
+    data
+  })
+}

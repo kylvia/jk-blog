@@ -9,22 +9,7 @@
             <el-button type="info">创建form</el-button>
           </router-link>
 
-          <el-dropdown trigger="click">
-            <el-button plain>{{!postForm.comment_disabled?'评论已打开':'评论已关闭'}}
-              <i class="el-icon-caret-bottom el-icon--right"></i>
-            </el-button>
-            <el-dropdown-menu class="no-padding" slot="dropdown">
-              <el-dropdown-item>
-                <el-radio-group style="padding: 10px;" v-model="postForm.comment_disabled">
-                  <el-radio :label="true">关闭评论</el-radio>
-                  <el-radio :label="false">打开评论</el-radio>
-                </el-radio-group>
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-
-          <el-button v-loading="loading" style="margin-left: 10px;" type="success" @click="submitForm(0)">发布
-          </el-button>
+          <el-button v-loading="loading" style="margin-left: 10px;" type="success" @click="submitForm(0)">发布</el-button>
           <el-button v-loading="loading" type="warning" @click="submitForm(1)">草稿</el-button>
 
         </template>
@@ -111,8 +96,7 @@ const defaultForm = {
   content_short: '', // 文章摘要
   image_uri: '', // 文章图片
   display_time: undefined, // 前台展示时间
-  id: undefined,
-  comment_disabled: false
+  id: undefined
 }
 
 export default {
@@ -188,7 +172,6 @@ export default {
       const that = this
       // console.log(this.postForm.display_time)
       this.postForm.display_time = parseInt(this.postForm.display_time / 1000)
-      this.postForm.id = this.$route.params.id
       this.$refs.postForm.validate(valid => {
         if (valid) {
           this.loading = true

@@ -55,7 +55,7 @@ export default {
       this.$emit('input', val)
     },
     handleImageScucess(file) {
-      this.emitInput(file.imgUrl)
+      this.emitInput(file.data.imgUrl)
     },
     beforeUpload() {
       /* const _self = this

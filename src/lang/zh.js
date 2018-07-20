@@ -34,6 +34,7 @@ export default {
     tab: 'Tab',
     form: '表单',
     editWebInfo: '系统设置',
+    photo: '相册',
     createForm: '创建表单',
     editForm: '编辑表单',
     errorPages: '错误页面',

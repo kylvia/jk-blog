@@ -1,23 +1,23 @@
 <template>
   <div class="singleImageUpload2 upload-container">
-    <el-upload class="image-uploader" :data="dataObj" drag :multiple="false" :show-file-list="false" action="https://httpbin.org/post"
+    <el-upload class="image-uploader" :data="dataObj" drag :multiple="false" :show-file-list="false" :action="imgAction"
       :on-success="handleImageScucess">
       <i class="el-icon-upload"></i>
       <div class="el-upload__text">Drag或<em>点击上传</em></div>
     </el-upload>
-    <div v-show="imageUrl.length>0" class="image-preview">
+    <!--<div v-show="imageUrl.length>0" class="image-preview">
       <div class="image-preview-wrapper" v-show="imageUrl.length>1">
         <img :src="imageUrl">
         <div class="image-preview-action">
           <i @click="rmImage" class="el-icon-delete"></i>
         </div>
       </div>
-    </div>
+    </div>-->
   </div>
 </template>
 
 <script>
-import { getToken } from '@/api/qiniu'
+// import { getToken } from '@/api/qiniu'
 
 export default {
   name: 'singleImageUpload2',
@@ -27,6 +27,10 @@ export default {
   computed: {
     imageUrl() {
       return this.value
+    },
+
+    imgAction() {
+      return (process.env.BASE_API + '/articleFront/upload')
     }
   },
   data() {
@@ -40,13 +44,14 @@ export default {
       this.emitInput('')
     },
     emitInput(val) {
-      this.$emit('input', val)
+      // this.$emit('input', val)
+      this.$emit('uploadSuccess', val)
     },
-    handleImageScucess() {
-      this.emitInput(this.tempUrl)
+    handleImageScucess(file) {
+      this.emitInput(file)
     },
     beforeUpload() {
-      const _self = this
+      /* const _self = this
       return new Promise((resolve, reject) => {
         getToken().then(response => {
           const key = response.data.qiniu_key
@@ -58,7 +63,7 @@ export default {
         }).catch(() => {
           reject(false)
         })
-      })
+      })*/
     }
   }
 }
@@ -66,15 +71,16 @@ export default {
 
 <style rel="stylesheet/scss" lang="scss" scoped>
 .upload-container {
-  width: 100%;
+  width: 50%;
   height: 100%;
+  margin: 10px auto;
   position: relative;
   .image-uploader {
     height: 100%;
   }
   .image-preview {
-    width: 100%;
-    height: 100%;
+    width: 320px;
+    height: 180px;
     position: absolute;
     left: 0px;
     top: 0px;

@@ -14,7 +14,7 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
-
+console.log(process.env.env_config)
 const env = require('../config/'+process.env.env_config+'.env')
 
 const webpackConfig = merge(baseWebpackConfig, {
@@ -68,7 +68,7 @@ const webpackConfig = merge(baseWebpackConfig, {
       template: 'index.html',
       inject: true,
       favicon: resolve('favicon.ico'),
-      title: 'vue-element-admin',
+      title: 'dk-element-admin',
       path: config.build.assetsPublicPath + config.build.assetsSubDirectory,
       minify: {
         removeComments: true,
