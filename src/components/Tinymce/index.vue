@@ -67,7 +67,7 @@ export default {
       const _this = this
       window.tinymce.init({
         selector: `#${this.tinymceId}`,
-        height: this.height,
+        // height: this.height,
         body_class: 'panel-body ',
         object_resizing: false,
         toolbar: this.toolbar.length > 0 ? this.toolbar : toolbar,
@@ -76,6 +76,11 @@ export default {
         end_container_on_empty_block: true,
         powerpaste_word_import: 'clean',
         code_dialog_height: 450,
+        autoresize_bottom_margin: 50,
+        autoresize_max_height: 500,
+        autoresize_min_height: 350,
+        autoresize_on_init: true,
+        autoresize_overflow_padding: 50,
         code_dialog_width: 1000,
         advlist_bullet_styles: 'square',
         advlist_number_styles: 'default',
