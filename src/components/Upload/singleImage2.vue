@@ -1,9 +1,13 @@
 <template>
   <div class="singleImageUpload2 upload-container">
-    <el-upload class="image-uploader" :data="dataObj" drag :multiple="false" :show-file-list="false" :action="imgAction"
+    <div v-if="loading" class="loadMaks">
+      <i class="el-icon-loading"></i>
+      <p>上传中......</p>
+    </div>
+    <el-upload class="image-uploader" :data="dataObj" drag :multiple="false" :show-file-list="false" :action="imgAction" :before-upload="beforeUpload"
       :on-success="handleImageScucess">
-      <i class="el-icon-upload"></i>
-      <div class="el-upload__text">Drag或<em>点击上传</em></div>
+      <i v-if="!loading" class="el-icon-upload"></i>
+      <div v-if="!loading" class="el-upload__text">Drag或<em>点击上传</em></div>
     </el-upload>
     <!--<div v-show="imageUrl.length>0" class="image-preview">
       <div class="image-preview-wrapper" v-show="imageUrl.length>1">
@@ -36,6 +40,7 @@ export default {
   data() {
     return {
       tempUrl: '',
+      loading: false,
       dataObj: { token: '', key: '' }
     }
   },
@@ -48,9 +53,11 @@ export default {
       this.$emit('uploadSuccess', val)
     },
     handleImageScucess(file) {
+      this.loading = false
       this.emitInput(file)
     },
     beforeUpload() {
+      this.loading = true
       /* const _self = this
       return new Promise((resolve, reject) => {
         getToken().then(response => {
@@ -70,7 +77,7 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
-.upload-container {
+.upload-container{
   width: 50%;
   height: 100%;
   margin: 10px auto;
@@ -78,6 +85,18 @@ export default {
   .image-uploader {
     height: 100%;
   }
+  .loadMaks {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    padding-top: 30px;
+    background-color: rgba(0,0,0,.2);
+    z-index: 9;
+    text-align: center;
+    font-size: 32px;
+    color: rgb(64, 158, 255);
+  }
+
   .image-preview {
     width: 320px;
     height: 180px;
